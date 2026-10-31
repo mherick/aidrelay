@@ -6,7 +6,7 @@ A civilian casualty relay for disaster, mass-casualty, wildland fire, and rural 
 
 **Built during the event:** all code in this repository was written during the Meta AI Developer Hackathon, October 26 – November 4, 2026. Indie track, Team Naian (solo build — Armando Fierro).
 
-Demo video: _(link added before submission)_
+Demo video: https://youtu.be/LUchtA-aDk8
 
 ## How it works
 

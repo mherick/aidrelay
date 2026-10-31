@@ -24,7 +24,7 @@ Meta AI models in the product and Meta AI agents in the production.
 
 - **Director** — a Muse Spark agent: storyboard and the full
   production package (script, shot list, cards).
-- **Editors** — Muse Spark agents: rough cuts v1–v8 (assembly,
+- **Editors** — Muse Spark agents: rough cuts v1–v9 (assembly,
   music mix, caption burn-in).
 - **Judge** — a Muse Spark agent: an independent rubric evaluation
   of the video, this repo, and the submission draft (Oct 31, 2026).
