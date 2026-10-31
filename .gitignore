@@ -1,0 +1,18 @@
+# Local certificate material — generated per the README's phone-setup steps.
+# NEVER commit any of these: a CA private key (ca.key) or server key (key.pem)
+# in a public repo compromises every device that trusts that CA.
+cert.pem
+key.pem
+ca.key
+ca.crt
+*.key
+*.pem
+*.csr
+*.srl
+server.cnf
+
+# Local secrets / config
+.env
+
+# OS noise
+.DS_Store

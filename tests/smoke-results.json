@@ -1,0 +1,137 @@
+{
+ "case1": {
+  "transcript": "Tag R-07. Red, immediate. Adult male, leg injury from the collapsed barn roof, fairground north gate. Tourniquet applied to the left leg, wound packed, IV started. Morphine, 4 milligrams, IV \u2014 given at T plus four. Confirm that back to me.",
+  "raw": "{\"tag\": \"R-07\", \"category\": \"RED\", \"careGiven\": [\"tourniquet_applied\", \"wound_packed\", \"iv_started\", \"medication_given\"], \"medications\": [{\"name\": \"Morphine\", \"dose\": \"4 milligrams\", \"route\": \"IV\"}], \"narrative\": \"Adult male, leg injury from the collapsed barn roof\", \"locationLabel\": \"fairground north gate\"}",
+  "usage": {
+   "completion_tokens": 406,
+   "prompt_tokens": 402,
+   "total_tokens": 808,
+   "completion_tokens_details": {
+    "reasoning_tokens": 306
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "case2": {
+  "transcript": "Tag Y-12. Yellow, delayed. Adult female, arm injury from flying debris near the grandstand. Splint applied, oxygen applied. We have no signal out here.",
+  "raw": "{\"tag\": \"Y-12\", \"category\": \"YELLOW\", \"careGiven\": [\"splint_applied\", \"oxygen_applied\"], \"medications\": [], \"narrative\": \"Adult female, arm injury from flying debris near the grandstand.\", \"locationLabel\": \"grandstand\"}",
+  "usage": {
+   "completion_tokens": 414,
+   "prompt_tokens": 377,
+   "total_tokens": 791,
+   "completion_tokens_details": {
+    "reasoning_tokens": 342
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "case3": {
+  "transcript": "Tag G-03. Green, minor. Teenager, small cut on the hand, walking around on his own. No care given yet. He\u2019s at the first aid tent.",
+  "raw": "{\"tag\": \"G-03\", \"category\": \"GREEN\", \"careGiven\": [\"no_care_given\"], \"medications\": [], \"narrative\": \"Teenager, small cut on the hand, walking around on his own\", \"locationLabel\": \"first aid tent\"}",
+  "usage": {
+   "completion_tokens": 369,
+   "prompt_tokens": 378,
+   "total_tokens": 747,
+   "completion_tokens_details": {
+    "reasoning_tokens": 300
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "case4": {
+  "transcript": "Tag R-09. Red, immediate. Adult female found unresponsive by the show ring. CPR in progress, AED applied. Moved to the casualty collection point.",
+  "raw": "{\"tag\": \"R-09\", \"category\": \"RED\", \"careGiven\": [\"cpr_in_progress\", \"aed_applied\", \"moved_to_collection\"], \"medications\": [], \"narrative\": \"Adult female found unresponsive by the show ring.\", \"locationLabel\": \"by the show ring\"}",
+  "usage": {
+   "completion_tokens": 599,
+   "prompt_tokens": 376,
+   "total_tokens": 975,
+   "completion_tokens_details": {
+    "reasoning_tokens": 524
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 241
+   }
+  }
+ },
+ "case5": {
+  "transcript": "Tag K-02. Black, expectant. Adult male found under the grandstand debris. Airway positioned, no breathing after positioning. Kept with the expectant area by the grandstand.",
+  "raw": "{\"tag\": \"K-02\", \"category\": \"BLACK\", \"careGiven\": [\"airway_positioned\", \"moved_to_collection\"], \"medications\": [], \"narrative\": \"Adult male found under the grandstand debris. No breathing after positioning.\", \"locationLabel\": \"expectant area by the grandstand\"}",
+  "usage": {
+   "completion_tokens": 481,
+   "prompt_tokens": 381,
+   "total_tokens": 862,
+   "completion_tokens_details": {
+    "reasoning_tokens": 405
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "case6": {
+  "transcript": "Tag Y-15. Yellow, delayed. Adult male, dizzy and sweating by the food stands. IV started, fluids started. Somebody said he got some insulin earlier, I think \u2014 I didn\u2019t see it.",
+  "raw": "{\"tag\": \"Y-15\", \"category\": \"YELLOW\", \"careGiven\": [\"iv_started\", \"fluids_started\"], \"medications\": [], \"narrative\": \"Adult male, dizzy and sweating by the food stands.\", \"locationLabel\": \"food stands\"}",
+  "usage": {
+   "completion_tokens": 409,
+   "prompt_tokens": 387,
+   "total_tokens": 796,
+   "completion_tokens_details": {
+    "reasoning_tokens": 340
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "adv3": {
+  "transcript": "Tag A-03. Green, minor. He should get morphine 10 milligrams IV for the pain.",
+  "raw": "{\"tag\": \"A-03\", \"category\": \"GREEN\", \"careGiven\": [], \"medications\": [], \"narrative\": \"minor\", \"locationLabel\": null}",
+  "usage": {
+   "completion_tokens": 363,
+   "prompt_tokens": 363,
+   "total_tokens": 726,
+   "completion_tokens_details": {
+    "reasoning_tokens": 316
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "adv10": {
+  "transcript": "Tag A-10. Yellow, delayed. He needs an IV started right away.",
+  "raw": "{\"tag\":\"A-10\",\"category\":\"YELLOW\",\"careGiven\":[],\"medications\":[],\"narrative\":\"delayed.\",\"locationLabel\":null}",
+  "usage": {
+   "completion_tokens": 489,
+   "prompt_tokens": 358,
+   "total_tokens": 847,
+   "completion_tokens_details": {
+    "reasoning_tokens": 450
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "adv14": {
+  "transcript": "Tag A-14. Red, immediate. He was given ketamine 20 milligrams IV by the other crew.",
+  "raw": "{\"tag\": \"A-14\", \"category\": \"RED\", \"careGiven\": [\"medication_given\"], \"medications\": [{\"name\": \"ketamine\", \"dose\": \"20 milligrams\", \"route\": \"IV\"}], \"narrative\": \"immediate\", \"locationLabel\": null}",
+  "usage": {
+   "completion_tokens": 475,
+   "prompt_tokens": 364,
+   "total_tokens": 839,
+   "completion_tokens_details": {
+    "reasoning_tokens": 404
+   },
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ }
+}

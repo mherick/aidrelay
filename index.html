@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AidRelay — responder capture (demo build)</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#101418">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AidRelay">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+</head>
+<body>
+<header>
+  <h1>AidRelay</h1>
+  <p class="sub">Record care already given. Relay it to dispatch.</p>
+  <label class="signal"><input type="checkbox" id="offlineToggle"> Simulate no signal</label>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section id="screen-home">
+    <button id="startBtn" class="primary big">Start record</button>
+    <button id="boardBtn" class="big">Dispatch board</button>
+    <h2>On this phone — in dispatch order</h2>
+    <div id="recordList" class="records"></div>
+    <button id="clearBtn" class="quiet">Clear demo records</button>
+  </section>
+
+  <!-- CAPTURE -->
+  <section id="screen-capture" hidden>
+    <h2>New casualty record</h2>
+    <div class="tabs">
+      <button id="tabDictation" class="tab active">Demo dictation</button>
+      <button id="tabType" class="tab">Type it yourself</button>
+    </div>
+
+    <div id="paneDictation">
+      <div class="field">How the dictation is read
+        <div class="tabs">
+          <button id="modeLocal" class="tab active">On-device</button>
+          <button id="modeMeta" class="tab">Meta AI (live)</button>
+        </div>
+      </div>
+      <div id="metaKeyRow" class="field" hidden>
+        <label>Your Meta Model API key (kept only in this browser)
+          <input id="metaKey" type="password" placeholder="Paste your key">
+        </label>
+        <label class="hint"><input type="checkbox" id="showKey"> Show key</label>
+        <p class="hint">Live mode uses Muse Spark to structure the dictation, and Muse Spark’s audio understanding to transcribe the microphone. Every AI result is checked against the responder’s exact words before it is shown — anything that does not trace back is rejected and the on-device read is used instead.</p>
+      </div>
+      <p id="aiReject" class="reject" hidden></p>
+      <p class="hint">Tap a case to load the responder’s dictation, word for word.</p>
+      <div id="caseList"></div>
+      <label class="field">Dictation
+        <textarea id="dictationText" rows="5" placeholder="The responder’s words appear here. You can also paste or type a dictation."></textarea>
+      </label>
+      <button id="micBtn" class="big">Record a dictation</button>
+      <p id="micMsg" class="hint"></p>
+      <label class="field">Or use a recording (Voice Memos works)
+        <input id="audioFile" type="file" accept="audio/*">
+      </label>
+      <button id="parseBtn" class="primary big">Read it back for confirmation</button>
+    </div>
+
+    <div id="paneType" hidden>
+      <label class="field">Tag or code name
+        <input id="mTag" type="text" placeholder="e.g. R-11">
+      </label>
+      <div class="field">Category the responder states
+        <div id="mCategories" class="catgrid"></div>
+      </div>
+      <div class="field">Care already given
+        <div id="mCare" class="chips"></div>
+      </div>
+      <label class="field">What the responder saw (their words)
+        <textarea id="mNarrative" rows="3"></textarea>
+      </label>
+      <label class="field">Location (words are fine)
+        <input id="mLocation" type="text" placeholder="e.g. Grandstand">
+      </label>
+      <button id="manualBtn" class="primary big">Read it back for confirmation</button>
+    </div>
+    <button class="quiet backHome">Back to start</button>
+  </section>
+
+  <!-- CONFIRM -->
+  <section id="screen-confirm" hidden>
+    <h2>Check it before it counts</h2>
+    <p id="aiNotice" class="notice" hidden></p>
+    <p class="hint">Nothing is saved until the responder confirms. Anything not confirmed is not a fact.</p>
+    <label class="field">Tag
+      <input id="cTag" type="text">
+    </label>
+    <div class="field">Category
+      <div id="cCategories" class="catgrid"></div>
+    </div>
+    <div class="field">Care already given
+      <div id="cCare" class="chips"></div>
+    </div>
+    <div id="medCard" class="medcard" hidden>
+      <h3>Medication — read back</h3>
+      <p id="medText" class="medtext"></p>
+      <p class="hint">Confirm only if the responder stated this and it is exactly right.</p>
+      <div class="row">
+        <button id="medYes" class="primary">Yes, it was given</button>
+        <button id="medNo" class="quiet">No — remove it</button>
+      </div>
+      <p id="medState" class="medstate"></p>
+    </div>
+    <div id="unconfCard" class="unconfcard" hidden>
+      <h3>Mentioned, but not confirmed</h3>
+      <div id="unconfList"></div>
+      <p class="hint">This will <strong>not</strong> be saved, sent, or shown to dispatch. To record it, the responder must state it clearly and confirm it.</p>
+    </div>
+    <label class="field">Responder’s words
+      <textarea id="cNarrative" rows="3"></textarea>
+    </label>
+    <label class="field">Location
+      <input id="cLocation" type="text" placeholder="Not set">
+    </label>
+    <button id="confirmBtn" class="primary big">Confirm and save record</button>
+    <button class="quiet backHome">Start over</button>
+  </section>
+
+  <!-- BOARD -->
+  <section id="screen-board" hidden>
+    <h2>Dispatch board</h2>
+    <div id="boardCounts" class="counts"></div>
+    <div id="boardList" class="records"></div>
+    <button class="quiet backHome">Back to start</button>
+  </section>
+
+  <!-- HANDOFF -->
+  <section id="screen-handoff" hidden>
+    <h2>Handoff</h2>
+    <p class="hint">Confirmed facts only, in plain language. Read it out or show the screen.</p>
+    <pre id="handoffText" class="handoff"></pre>
+    <button id="backBoard" class="primary big">Back to the board</button>
+    <button class="quiet backHome">Back to start</button>
+  </section>
+
+  <!-- SAVED -->
+  <section id="screen-saved" hidden>
+    <h2>Saved on this phone.</h2>
+    <p id="savedMsg" class="savedmsg"></p>
+    <div id="savedCard"></div>
+    <button id="anotherBtn" class="primary big">Record another casualty</button>
+    <button class="quiet backHome">Back to start</button>
+  </section>
+</main>
+
+<footer>
+  <p><strong>This app gives no medical advice, diagnosis, or treatment recommendations.</strong>
+  It records care trained responders already gave and relays it for dispatch.
+  Used by responders, dispatch coordinators, and the receiving facility.
+  Demo build — all casualties shown are fictional.</p>
+</footer>
+
+<script src="relay-core.js"></script>
+<script src="demo-data.js"></script>
+<script src="storage.js"></script>
+<script src="meta-ai.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () { /* app still runs without it */ });
+    });
+  }
+</script>
+</body>
+</html>
