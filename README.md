@@ -11,12 +11,18 @@ Demo video: https://youtu.be/LUchtA-aDk8
 ## How it works
 
 - **Capture.** Dictate (microphone or an uploaded recording), use the built-in demo dictations, or type the entry. Care is captured against a fixed list of 17 completed-action items (`docs/schema.md`) — there is no free-text care entry, and instruction sentences ("he needs…", "you should…") can never become record facts.
-- **Structure.** Two modes. *On-device:* a deterministic local parser. *Meta AI (live):* Muse Spark 1.3 structures the dictation and Muse Spark 1.2 transcribes recordings (converted to 16 kHz WAV in the browser), using **your own** Meta Model API key, entered in the app and kept in that browser only.
+- **Structure.** Two modes. *On-device:* a deterministic local parser. *Meta AI (live):* Muse Spark 1.3 structures the dictation and Muse Spark 1.2 transcribes recordings (converted to 16 kHz WAV in the browser), using **your own** Meta Model API key, entered in the app and kept in that browser only. Live structuring can optionally run on Meta's open-weights model instead — see **Open weights** below.
 - **The AI gate.** Every Spark draft passes `validateAiDraft` before it is shown. Each fact must trace to the transcript, checked against the local parse: invented care items, assigned categories, added fields (e.g. a diagnosis), invented locations, advice language, and medications not stated as given are rejected — the *whole* draft is rejected, the reason is shown, and the on-device read is used instead. In a live run on Oct 30, 2026, Spark's output matched the expected record on 5 of 6 scripted cases; on the sixth it invented a care item and the gate rejected it. Recorded outputs are in `tests/smoke-results.json`.
 - **Medication rule.** A medication enters a record only after a verbatim read-back and an explicit responder confirmation. Second-hand or hedged mentions ("some insulin earlier, I think") are structurally barred from the record.
 - **Confirm, then relay.** Nothing reaches the board unconfirmed. Records are encrypted at rest (AES-GCM, WebCrypto), queued offline, relayed on reconnect, and deduplicated (a re-delivery is ignored; an unexplained tag collision is held for a human, never silently merged). The dispatch board sorts red-first with counts by category; each casualty has a one-tap handoff — a plain-language restatement of confirmed facts only, machine-checked against a banned-language list so nothing the app says reads as advice.
 
 All demo casualties are fictional (a storm-damaged county fairground). The six scripted cases, with expected records and board order, are in `docs/demo-scripts.md`.
+
+## Open weights
+
+Live mode offers a second structuring provider: **Muse Spark Open** (Meta's open-weights model, hackathon build `meta-models/muse-spark-open-1026`) served by Baseten, using **your own** Baseten API key, also entered in the app and kept in that browser only. It receives the identical structuring prompt and its output passes the identical `validateAiDraft` gate — same app, same gate, open-weights model. The Baseten provider structures only: transcription still runs on the hosted Meta API (Muse Spark 1.2), because the Baseten hackathon key serves that one chat model.
+
+In a live run on Oct 31, 2026, Spark Open's drafts were accepted on all 6 scripted cases with fields matching the expected records — including the case where the hosted Spark 1.3 draft had been rejected for inventing a care item. The same run showed the opposite failure direction on an adversarial case: a medication the responder stated as given (ketamine, by another crew) was left in the narrative and produced no medication candidate, so no read-back would have been offered; the hosted model structured that one as a candidate. Nothing was invented in either direction — the gate's standard is that a draft may add nothing, and both models met it. Recorded outputs are in `tests/smoke-baseten-results.json`.
 
 ## Run it
 
@@ -74,9 +80,10 @@ node tests/gate-c.test.js   # Gate C — offline queue: persistence, relay on re
 node tests/gate-d.test.js   # Gate D — boundary set: 20 adversarial inputs, 6 handoffs, 0 fact violations
 node tests/gate-e.test.js   # Gate E — the AI gate: fabricated AI drafts accepted or rejected wholesale
 node tests/smoke-validate.js  # re-verifies the recorded live-run outputs in tests/smoke-results.json
+node tests/smoke-baseten-validate.js  # re-verifies the recorded Spark Open outputs in tests/smoke-baseten-results.json
 ```
 
-The live smoke *run* itself (Oct 30, 2026) used the builder's own Meta Model API key and is not rerunnable from this repo; its recorded raw outputs ship in `tests/smoke-results.json` so the verdicts can be re-checked offline with `smoke-validate.js`.
+The live smoke *run* itself (Oct 30, 2026) used the builder's own Meta Model API key and is not rerunnable from this repo; its recorded raw outputs ship in `tests/smoke-results.json` so the verdicts can be re-checked offline with `smoke-validate.js`. The Baseten run (Oct 31, 2026) used the builder's hackathon Baseten key the same way; `tests/baseten_smoke.py` reruns it and `tests/smoke-baseten-validate.js` re-checks the recorded outputs offline.
 
 ## Design law and limits
 

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """AidRelay — local server (stdlib only).
-Serves the app on this machine's network and relays Meta Model API calls
-from the page to https://api.meta.ai. The browser talks only to this
-server on your own machine/network; your API key travels from the page to
-this server and from here to Meta — it is never stored or logged.
+Serves the app on this machine's network and relays AI calls from the
+page to the provider the user picked: the hosted Meta Model API
+(https://api.meta.ai) or Baseten (https://inference.baseten.co, Muse
+Spark Open). The browser talks only to this server on your own
+machine/network; your API key travels from the page to this server and
+from here to the provider — it is never stored or logged.
 
 Two doors:
   http://<this machine>:8772   — setup door. Serves the app, and /ca.crt,
@@ -21,6 +23,8 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 PORT = 8772
 TLS_PORT = 8773
 API_URL = "https://api.meta.ai/v1/chat/completions"
+BASETEN_URL = "https://inference.baseten.co/v1/chat/completions"
+RELAY_ROUTES = {"/api/chat": API_URL, "/api/chat-baseten": BASETEN_URL}
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 class Handler(SimpleHTTPRequestHandler):
@@ -46,14 +50,15 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
-        if self.path != "/api/chat":
+        target = RELAY_ROUTES.get(self.path)
+        if target is None:
             self.send_error(404); return
         try:
             length = int(self.headers.get("Content-Length") or 0)
             payload = json.loads(self.rfile.read(length) or b"{}")
             key = payload.get("apiKey") or ""
             body = payload.get("body") or {}
-            req = urllib.request.Request(API_URL, data=json.dumps(body).encode(),
+            req = urllib.request.Request(target, data=json.dumps(body).encode(),
                                          headers={"Content-Type": "application/json",
                                                   "Authorization": "Bearer " + key},
                                          method="POST")

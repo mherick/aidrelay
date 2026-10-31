@@ -151,6 +151,19 @@
 
   /* ---------- structuring mode: on-device vs Meta AI (live) ---------- */
   var metaMode = false;
+  var provider = window.RelayMeta.getProvider();
+  function currentKey() { return provider === 'baseten' ? window.RelayMeta.getBasetenKey() : window.RelayMeta.getKey(); }
+  function storeCurrentKey(v) { if (provider === 'baseten') window.RelayMeta.setBasetenKey(v); else window.RelayMeta.setKey(v); }
+  function setProvider(p) {
+    provider = p;
+    window.RelayMeta.setProvider(p);
+    $('providerMeta').classList.toggle('active', p !== 'baseten');
+    $('providerBaseten').classList.toggle('active', p === 'baseten');
+    $('keyLabel').textContent = p === 'baseten'
+      ? 'Your Baseten API key (kept only in this browser)'
+      : 'Your Meta Model API key (kept only in this browser)';
+    $('metaKey').value = currentKey();
+  }
   function setMode(meta) {
     metaMode = meta;
     $('modeLocal').classList.toggle('active', !meta);
@@ -159,8 +172,10 @@
   }
   $('modeLocal').addEventListener('click', function () { setMode(false); });
   $('modeMeta').addEventListener('click', function () { setMode(true); });
-  $('metaKey').value = window.RelayMeta.getKey();
-  $('metaKey').addEventListener('change', function () { window.RelayMeta.setKey($('metaKey').value.trim()); });
+  $('providerMeta').addEventListener('click', function () { setProvider('meta'); });
+  $('providerBaseten').addEventListener('click', function () { setProvider('baseten'); });
+  setProvider(provider);
+  $('metaKey').addEventListener('change', function () { storeCurrentKey($('metaKey').value.trim()); });
   $('showKey').addEventListener('change', function () { $('metaKey').type = $('showKey').checked ? 'text' : 'password'; });
 
   function openConfirmNoted(d, notice) {
@@ -174,7 +189,7 @@
     if (!f) return;
     if (!metaMode) { $('micMsg').textContent = 'Recordings are transcribed in Meta AI (live) mode — switch at the top, add your key, then pick the recording.'; return; }
     var key = window.RelayMeta.getKey();
-    if (!key) { $('micMsg').textContent = 'The microphone uses Meta AI transcription — paste your Meta Model API key above first.'; setMode(true); return; }
+    if (!key) { setProvider('meta'); $('micMsg').textContent = 'Recordings are transcribed by the hosted Meta API, whichever structuring provider is picked — the key field above now shows your Meta key slot. Paste your Meta Model API key there, then pick the recording.'; return; }
     $('micMsg').textContent = 'Transcribing your recording…';
     try {
       var text = await window.RelayMeta.transcribeAudio(f, key);
@@ -191,22 +206,29 @@
     if (!text) { alert('Add the responder\u2019s dictation first.'); return; }
     $('aiReject').hidden = true;
     if (!metaMode) { openConfirmNoted(Core.parseDictation(text), null); return; }
-    var key = window.RelayMeta.getKey();
-    if (!key) { alert('Live mode needs your Meta Model API key. Paste it above first — it stays in this browser.'); return; }
-    $('parseBtn').textContent = 'Reading with Meta AI…';
+    var key = currentKey();
+    var isBaseten = provider === 'baseten';
+    if (!key) { alert(isBaseten
+      ? 'Live mode with the Baseten provider needs your Baseten API key. Paste it above first — it stays in this browser.'
+      : 'Live mode needs your Meta Model API key. Paste it above first — it stays in this browser.'); return; }
+    $('parseBtn').textContent = isBaseten ? 'Reading with Muse Spark Open…' : 'Reading with Meta AI…';
     try {
-      var ai = await window.RelayMeta.structureWithSpark(text, key);
+      var ai = isBaseten
+        ? await window.RelayMeta.structureWithBaseten(text, key)
+        : await window.RelayMeta.structureWithSpark(text, key);
       var v = Core.validateAiDraft(ai, text);
       if (v.ok) {
-        openConfirmNoted(v.draft, 'Structured by Meta AI (Muse Spark) and checked against the responder\u2019s exact words — every item below traces to the dictation.' + (v.warnings.length ? ' Notes: ' + v.warnings.join(' ') : ''));
+        openConfirmNoted(v.draft, (isBaseten
+          ? 'Structured by Muse Spark Open (Meta open weights, via Baseten)'
+          : 'Structured by Meta AI (Muse Spark)') + ' and checked against the responder\u2019s exact words — every item below traces to the dictation.' + (v.warnings.length ? ' Notes: ' + v.warnings.join(' ') : ''));
       } else {
         $('aiReject').hidden = false;
-        $('aiReject').textContent = 'Meta AI\u2019s draft was rejected: ' + v.reasons.join(' ') + ' Showing the on-device read instead.';
+        $('aiReject').textContent = (isBaseten ? 'Muse Spark Open\u2019s' : 'Meta AI\u2019s') + ' draft was rejected: ' + v.reasons.join(' ') + ' Showing the on-device read instead.';
         openConfirmNoted(Core.parseDictation(text), null);
       }
     } catch (e) {
       $('aiReject').hidden = false;
-      $('aiReject').textContent = 'Meta AI could not be reached (' + e.message + '). Showing the on-device read instead.';
+      $('aiReject').textContent = (isBaseten ? 'Baseten' : 'Meta AI') + ' could not be reached (' + e.message + '). Showing the on-device read instead.';
       openConfirmNoted(Core.parseDictation(text), null);
     } finally {
       $('parseBtn').textContent = 'Read it back for confirmation';
@@ -218,7 +240,7 @@
   $('micBtn').addEventListener('click', async function () {
     if (recorder && recorder.state === 'recording') { recorder.stop(); return; }
     var key = window.RelayMeta.getKey();
-    if (!key) { $('micMsg').textContent = 'The microphone uses Meta AI transcription — paste your Meta Model API key above first.'; setMode(true); return; }
+    if (!key) { setMode(true); setProvider('meta'); $('micMsg').textContent = 'The microphone is transcribed by the hosted Meta API, whichever structuring provider is picked — the key field above now shows your Meta key slot. Paste your Meta Model API key there first.'; return; }
     try {
       var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       chunks = [];

@@ -11,6 +11,10 @@ Meta AI models in the product and Meta AI agents in the production.
   dictation. (Muse Voice Transcribe 1.0 was evaluated during the
   build; it was not available on this account, so transcription
   ships on Spark 1.2.)
+- **Muse Spark Open** (Meta open weights, via Baseten) — optional
+  alternate structuring provider: the same prompt and the same
+  validation gate, on the open-weights model (live smoke results
+  in `tests/smoke-baseten-results.json`).
 
 ## In development
 

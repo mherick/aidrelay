@@ -47,11 +47,18 @@
         </div>
       </div>
       <div id="metaKeyRow" class="field" hidden>
-        <label>Your Meta Model API key (kept only in this browser)
+        <div class="field">Structuring provider
+          <div class="tabs">
+            <button id="providerMeta" class="tab active">Muse Spark (hosted)</button>
+            <button id="providerBaseten" class="tab">Muse Spark Open — Baseten</button>
+          </div>
+        </div>
+        <label><span id="keyLabel">Your Meta Model API key (kept only in this browser)</span>
           <input id="metaKey" type="password" placeholder="Paste your key">
         </label>
         <label class="hint"><input type="checkbox" id="showKey"> Show key</label>
         <p class="hint">Live mode uses Muse Spark to structure the dictation, and Muse Spark’s audio understanding to transcribe the microphone. Every AI result is checked against the responder’s exact words before it is shown — anything that does not trace back is rejected and the on-device read is used instead.</p>
+        <p class="hint">The Baseten provider runs the same structuring on Muse Spark Open, Meta’s open-weights model, with the identical check. It structures only: microphone transcription always uses the hosted Meta API and your Meta key, whichever provider is picked here.</p>
       </div>
       <p id="aiReject" class="reject" hidden></p>
       <p class="hint">Tap a case to load the responder’s dictation, word for word.</p>
