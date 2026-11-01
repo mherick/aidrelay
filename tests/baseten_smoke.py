@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 """Live smoke test, Baseten path: run the production structuring prompt +
-transcripts through Muse Spark Open (meta-models/muse-spark-open-1026,
-Meta open weights, served by Baseten) and save raw outputs for validation
-by tests/smoke-baseten-validate.js. Uses Muse's registered Baseten
-connector key (Muse-side only — never shipped in the app).
+the scripted transcripts through Muse Spark Open
+(meta-models/muse-spark-open-1026, Meta open weights, served by Baseten)
+and save the raw outputs for validation by
+tests/smoke-baseten-validate.js.
+
+Bring your own key — nothing is embedded:
+
+    export BASETEN_API_KEY=<your Baseten API key>
+    python3 tests/baseten_smoke.py
+
+NOTE: a run overwrites tests/smoke-baseten-results.json. The copy shipped
+in this repo is the builder's recorded run of Oct 31, 2026; back it up
+first if you want to keep those exact outputs for comparison.
 
 Differences from tests/meta_smoke.py, both deliberate:
 - No reasoning_effort field. That dial is verified on the hosted API
@@ -11,14 +20,16 @@ Differences from tests/meta_smoke.py, both deliberate:
 - max_tokens is 4000 instead of 900. Muse Spark Open always reasons,
   and a small budget can be spent on reasoning before any JSON appears.
 """
-import json, re, sys, urllib.request, urllib.error
-sys.path.insert(0, "/opt/muse/skills/custom-connector-setup/bin")
-from dynamic_credentials import add_surrogate_to_request
+import json, os, re, sys, urllib.request, urllib.error
 
-ROOT = "/home/hatch/workspace/casualty-relay"
-meta_js = open(ROOT + "/meta-ai.js").read()
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+meta_js = open(os.path.join(ROOT, "meta-ai.js")).read()
 m = re.search(r'var STRUCTURING_PROMPT = ("(?:[^"\\]|\\.)*");', meta_js)
 PROMPT = json.loads(m.group(1))
+
+KEY = os.environ.get("BASETEN_API_KEY")
+if not KEY:
+    sys.exit("BASETEN_API_KEY is not set — see .env.example")
 
 MODEL = "meta-models/muse-spark-open-1026"
 URL = "https://inference.baseten.co/v1/chat/completions"
@@ -42,8 +53,8 @@ for name, transcript in CASES.items():
             "messages": [{"role": "system", "content": PROMPT}, {"role": "user", "content": transcript}]}
     req = urllib.request.Request(URL,
                                  data=json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json"}, method="POST")
-    add_surrogate_to_request(req, "custom.baseten", allowed_hosts=["inference.baseten.co"])
+                                 headers={"Content-Type": "application/json",
+                                          "Authorization": "Bearer " + KEY}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=600) as r:
             payload = json.loads(r.read().decode())
@@ -54,5 +65,6 @@ for name, transcript in CASES.items():
         results[name] = {"transcript": transcript, "raw": "", "error": "HTTP %s" % e.code}
         print(name, "HTTP", e.code, file=sys.stderr)
 
-json.dump(results, open(ROOT + "/tests/smoke-baseten-results.json", "w"), indent=1)
+out = os.path.join(ROOT, "tests", "smoke-baseten-results.json")
+json.dump(results, open(out, "w"), indent=1)
 print("saved tests/smoke-baseten-results.json")

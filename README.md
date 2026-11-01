@@ -8,6 +8,14 @@ A civilian casualty relay for disaster, mass-casualty, wildland fire, and rural 
 
 Demo video: https://youtu.be/LUchtA-aDk8
 
+## For judges
+
+No hosted version is provided or required, and no API keys ship anywhere in this repo or the app — you bring your own, or none.
+
+**Replay path (no keys).** Open `index.html` and run the six built-in demo dictations in order (capture screen → demo dictations). Confirm each record — Case 1 asks for a medication read-back (confirm the morphine); Case 6's second-hand insulin mention must appear nowhere in its record. The final board is the board in the video: R-07, R-09, Y-12, Y-15, G-03, K-02 — counts RED 2 · YELLOW 2 · GREEN 1 · BLACK 1. The builder's recorded live runs ship as provenance: `tests/smoke-results.json` (hosted Muse Spark 1.3, Oct 30, 2026) and `tests/smoke-baseten-results.json` (Muse Spark Open via Baseten, Oct 31, 2026) hold the raw model outputs, and they can be re-verified offline any time with `node tests/smoke-validate.js` and `node tests/smoke-baseten-validate.js`.
+
+**Live path (your own keys).** Run `python3 server.py`, open the app, switch to **Meta AI (live)**, and paste your own Meta Model API key. To run structuring on the open-weights model instead, also paste a Baseten API key and select the Baseten provider. Keys are kept in that browser's local storage only; the local server relays calls without storing or logging them. To re-run the recorded live smokes from a terminal, set `MODEL_API_KEY` / `BASETEN_API_KEY` (see `.env.example`) and run `python3 tests/meta_smoke.py` / `python3 tests/baseten_smoke.py` — a re-run overwrites the recorded outputs, so back up the shipped JSONs first if you want the comparison.
+
 ## How it works
 
 - **Capture.** Dictate (microphone or an uploaded recording), use the built-in demo dictations, or type the entry. Care is captured against a fixed list of 17 completed-action items (`docs/schema.md`) — there is no free-text care entry, and instruction sentences ("he needs…", "you should…") can never become record facts.
@@ -83,7 +91,7 @@ node tests/smoke-validate.js  # re-verifies the recorded live-run outputs in tes
 node tests/smoke-baseten-validate.js  # re-verifies the recorded Spark Open outputs in tests/smoke-baseten-results.json
 ```
 
-The live smoke *run* itself (Oct 30, 2026) used the builder's own Meta Model API key and is not rerunnable from this repo; its recorded raw outputs ship in `tests/smoke-results.json` so the verdicts can be re-checked offline with `smoke-validate.js`. The Baseten run (Oct 31, 2026) used the builder's hackathon Baseten key the same way; `tests/baseten_smoke.py` reruns it and `tests/smoke-baseten-validate.js` re-checks the recorded outputs offline.
+The recorded live runs (Oct 30, 2026 hosted; Oct 31, 2026 Baseten) used the builder's own keys; their raw outputs ship in `tests/smoke-results.json` and `tests/smoke-baseten-results.json` so the verdicts can be re-checked offline with the validators above. Both runs are also re-runnable with your own keys — see `.env.example` and **For judges** above.
 
 ## Design law and limits
 
