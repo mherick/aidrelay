@@ -37,9 +37,7 @@ Meta AI models in the product and Meta AI agents in the production.
 - **Music** — "Volatile Reaction" by Kevin MacLeod
   (incompetech.com). Licensed under Creative Commons:
   By Attribution 4.0 License
-  (http://creativecommons.org/licenses/by/4.0/). The file the
-  builder supplied ("AR1") is bit-identical to the Incompetech
-  release — identity verified 2026-11-02.
+  (http://creativecommons.org/licenses/by/4.0/).
 - **B-roll** — Mixkit stock footage, free license.
 - **Footage** — the builder's own iPhone screen recordings of the
   shipped app, shot Oct 31, 2026.
