@@ -34,7 +34,8 @@ Meta AI models in the product and Meta AI agents in the production.
   of the video, this repo, and the submission draft (Oct 31, 2026).
 - **Narration** — Piper text-to-speech (open source, rhasspy),
   voice `en_US-hfc_male-medium`. Not a Meta model.
-- **Music** — supplied by the builder (his own track).
+- **Music** — "AR1", a track supplied by the builder; he did not
+  compose it and its origin is unknown (corrected 2026-11-02).
 - **B-roll** — Mixkit stock footage, free license.
 - **Footage** — the builder's own iPhone screen recordings of the
   shipped app, shot Oct 31, 2026.

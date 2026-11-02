@@ -8,9 +8,11 @@ A civilian casualty relay for disaster, mass-casualty, wildland fire, and rural 
 
 Demo video: https://youtu.be/LUchtA-aDk8
 
+Live demo: https://mherick.github.io/aidrelay/ — the app itself, served from this repo. The six demo dictations and the full capture → confirm → board → handoff flow run with no key (on-device read); for live AI structuring, paste your own Meta Model API key in the app (kept in your browser's local storage only).
+
 ## For judges
 
-No hosted version is provided or required, and no API keys ship anywhere in this repo or the app — you bring your own, or none.
+No hosted version is required — the repo runs standalone — but a live copy of the app is hosted at https://mherick.github.io/aidrelay/ for convenience. No API keys ship anywhere in this repo or the app — you bring your own, or none.
 
 **Replay path (no keys).** Open `index.html` and run the six built-in demo dictations in order (capture screen → demo dictations). Confirm each record — Case 1 asks for a medication read-back (confirm the morphine); Case 6's second-hand insulin mention must appear nowhere in its record. The final board is the board in the video: R-07, R-09, Y-12, Y-15, G-03, K-02 — counts RED 2 · YELLOW 2 · GREEN 1 · BLACK 1. The builder's recorded live runs ship as provenance: `tests/smoke-results.json` (hosted Muse Spark 1.3, Oct 30, 2026) and `tests/smoke-baseten-results.json` (Muse Spark Open via Baseten, Oct 31, 2026) hold the raw model outputs, and they can be re-verified offline any time with `node tests/smoke-validate.js` and `node tests/smoke-baseten-validate.js`.
 
@@ -45,6 +47,15 @@ python3 server.py        # serves the app at http://127.0.0.1:8772
 ```
 
 Open the printed address, switch the capture screen to **Meta AI (live)**, and paste your own Meta Model API key. When served from localhost, the page routes Meta calls through the local server (your key travels page → your machine → Meta; it is never stored or logged).
+
+### With Docker
+
+```
+docker build -t aidrelay .
+docker run --rm -p 8772:8772 aidrelay
+```
+
+Then open http://127.0.0.1:8772. The image is just Python's standard library — `server.py` has no dependencies to install.
 
 ### On a phone, with the live microphone (HTTPS setup)
 
