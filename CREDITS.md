@@ -28,12 +28,12 @@ Meta AI models in the product and Meta AI agents in the production.
 
 - **Director** — a Muse Spark agent: storyboard and the full
   production package (script, shot list, cards).
-- **Editors** — Muse Spark agents: rough cuts v1–v9 (assembly,
+- **Editors** — Muse Spark agents: rough cuts v1–v11 (assembly,
   music mix, caption burn-in).
 - **Judge** — a Muse Spark agent: an independent rubric evaluation
   of the video, this repo, and the submission draft (Oct 31, 2026).
 - **Narration** — Piper text-to-speech (open source, rhasspy),
-  voice `en_US-hfc_male-medium`. Not a Meta model.
+  voice `en_US-joe-medium`. Not a Meta model.
 - **Music** — "Volatile Reaction" by Kevin MacLeod
   (incompetech.com). Licensed under Creative Commons:
   By Attribution 4.0 License

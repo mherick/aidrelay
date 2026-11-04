@@ -6,7 +6,7 @@ A civilian casualty relay for disaster, mass-casualty, wildland fire, and rural 
 
 **Built during the event:** all code in this repository was written during the Meta AI Developer Hackathon, October 26 – November 4, 2026. Indie track, Team Naian (solo build — Armando Fierro).
 
-Demo video: https://youtu.be/LUchtA-aDk8
+Demo video: https://youtu.be/1NMOCU_v818
 
 Live demo: https://mherick.github.io/aidrelay/ — the app itself, served from this repo. The six demo dictations and the full capture → confirm → board → handoff flow run with no key (on-device read); for live AI structuring, paste your own Meta Model API key in the app (kept in your browser's local storage only).
 
